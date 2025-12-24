@@ -1,0 +1,62 @@
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+const int currentPin = A0;
+const int relayPin = 8;
+const int buzzerPin = 9;
+const int resetPin = 7;
+
+float pickupCurrent = 5.0; // Amps
+float K = 2.0;             // Time constant
+bool tripped = false;
+
+void setup() {
+  pinMode(relayPin, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(resetPin, INPUT_PULLUP);
+
+  digitalWrite(relayPin, LOW);
+  digitalWrite(buzzerPin, LOW);
+
+  lcd.init();
+  lcd.backlight();
+}
+
+void loop() {
+  if (digitalRead(resetPin) == LOW) {
+    tripped = false;
+    digitalWrite(relayPin, LOW);
+    digitalWrite(buzzerPin, LOW);
+  }
+
+  if (!tripped) {
+    int adc = analogRead(currentPin);
+    float current = map(adc, 0, 1023, 0, 20);
+
+    lcd.setCursor(0, 0);
+    lcd.print("Current: ");
+    lcd.print(current);
+    lcd.print("A  ");
+
+    if (current > pickupCurrent) {
+      float tripTime = K / ((current / pickupCurrent) - 1);
+      lcd.setCursor(0, 1);
+      lcd.print("Fault! Wait ");
+      lcd.print(tripTime, 1);
+      lcd.print("s ");
+
+      delay(tripTime * 1000);
+
+      tripped = true;
+      digitalWrite(relayPin, HIGH);
+      digitalWrite(buzzerPin, HIGH);
+
+      lcd.clear();
+      lcd.print("TRIP OCCURRED");
+    } else {
+      lcd.setCursor(0, 1);
+      lcd.print("Status: NORMAL ");
+    }
+  }
+}

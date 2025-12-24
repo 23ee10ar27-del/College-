@@ -1,0 +1,28 @@
+Project Title
+Arduino-Based Digital Overcurrent Relay with IDMT Characteristics
+
+Description
+This project simulates a digital overcurrent relay using Arduino. It monitors line current and trips the circuit when current exceeds a predefined pickup value, following inverse-time characteristics.
+
+Key Features
+Adjustable pickup current
+
+IDMT-based tripping
+
+Manual reset
+
+LCD fault display
+
+Applications
+Feeder protection
+
+Transformer protection
+
+Industrial motor protection
+
+Future Scope
+True RMS measurement
+
+CT sensor integration
+
+Communication (Modbus/IoT)
